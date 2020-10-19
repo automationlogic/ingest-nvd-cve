@@ -1,0 +1,12 @@
+runtime: python37
+service: ingest-nvd-cve
+entrypoint: gunicorn -t 300 -b :8080 -w 2 app.main:app
+env_variables:
+    URL: https://nvd.nist.gov/feeds/json/cve/1.1/nvdcve-1.1-2019.json.zip
+    PROJECT: $ANALYTICS_PROJECT   # replace in cloud build step
+    TOPIC: nvd-cve
+    SUBSCRIPTION: nvd-cve
+    DATASET: nvd_cve
+    TABLE: nvd_cve
+
+
