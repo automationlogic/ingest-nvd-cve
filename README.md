@@ -2,7 +2,7 @@
 
 ## Overview
 
-The ingestion process fetches the National Vulnerability Database (NVD), which is the U.S. government repository of standards based vulnerability management data represented. The NVD includes databases of security checklist references, security-related software flaws, misconfigurations, product names, and impact metrics. The NVD performs analysis on CVEs that have been published to the CVE Dictionary.
+The ingestion process fetches the National Vulnerability Database (NVD), which is the U.S. government repository of standards based vulnerability management data represented. The NVD includes databases of security checklist references, security-related software flaws, misconfigurations, product names, and impact metrics. The NVD performs analysis on Common Vulnerability Exposures (CVEs) that have been published to the CVE Dictionary.
 
 NVD CVE data from its [online source](https://nvd.nist.gov/vuln/data-feeds) is part of expanding the POC which originally used iris data to ingest. It runs as an App Engine app, which handles both fetching the data and placing it on a Pub/Sub topic, as well as reading it from Pub/Sub and inserting it into BigQuery.
 
