@@ -1,0 +1,12 @@
+steps:
+- name: "gcr.io/cloud-builders/gcloud"
+  entrypoint: /bin/sh
+  args:
+  - '-c'
+  - |
+     sed -e "s/\$$ANALYTICS_PROJECT/$_ANALYTICS_PROJECT/g" app.yaml.tmpl > app.yaml
+     cat app.yaml
+     gcloud app deploy --project ${_ANALYTICS_PROJECT}
+  dir: /workspace
+
+timeout: "1600s"
