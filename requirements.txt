@@ -4,8 +4,3 @@ google-cloud-bigquery
 requests
 gunicorn
 ijson
-json
-zipfile
-io
-urllib
-decimal 
