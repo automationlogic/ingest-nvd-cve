@@ -97,22 +97,25 @@ def callback(message):
     if message.data:
         decoded_message = message.data.decode('utf-8')
         lines = decoded_message.splitlines()
+        rows_to_insert = []
+
         for line in lines: 
             line = json.loads(line)
-            rows_to_insert = []
             rows_to_insert.append(line)
-            try:
-                table = bq_client.get_table(table_ref)
-            except NotFound:
-                create_table()
-                table = bq_client.get_table(table_ref)
 
-            print("Inserting {} rows into BigQuery ...".format(len(rows_to_insert)))
-            errors = bq_client.insert_rows_json(table, rows_to_insert)
-            if errors != []:
-                print(errors)
-            else:
-                message.ack()
+        try:
+            table = bq_client.get_table(table_ref)
+        except NotFound:
+            create_table()
+            table = bq_client.get_table(table_ref)
+
+        print("Inserting {} rows into BigQuery ...".format(len(rows_to_insert)))
+        errors = bq_client.insert_rows_json(table, rows_to_insert)
+        if errors != []:
+            print(errors)
+        else:
+            message.ack()
+
     assert errors == []
 
 def create_table():
