@@ -178,7 +178,10 @@ def create_table():
                                     fields=(
                                         bigquery.SchemaField("cpe_match", 'RECORD', mode="REPEATED",
                                             fields=(
+                                                bigquery.SchemaField("versionStartIncluding", 'STRING'),
+                                                bigquery.SchemaField("versionStartExcluding", 'STRING'),
                                                 bigquery.SchemaField("versionEndIncluding", 'STRING'),
+                                                bigquery.SchemaField("versionEndExcluding", 'STRING'),
                                                 bigquery.SchemaField("cpe23Uri", 'STRING'),
                                                 bigquery.SchemaField("vulnerable", 'BOOLEAN'),
                                             )
@@ -189,8 +192,9 @@ def create_table():
                                 bigquery.SchemaField("cpe_match", 'RECORD', mode="REPEATED",
                                     fields=(
                                         bigquery.SchemaField("versionStartIncluding", 'STRING'),
-                                        bigquery.SchemaField("versionEndExcluding", 'STRING'),
+                                        bigquery.SchemaField("versionStartExcluding", 'STRING'),
                                         bigquery.SchemaField("versionEndIncluding", 'STRING'),
+                                        bigquery.SchemaField("versionEndExcluding", 'STRING'),
                                         bigquery.SchemaField("cpe23Uri", 'STRING'),
                                         bigquery.SchemaField("vulnerable", 'BOOLEAN'),
                                     )
@@ -247,42 +251,10 @@ def create_table():
                         ),
                         bigquery.SchemaField("data_version", 'FLOAT'),
                         bigquery.SchemaField("data_format", 'STRING'),
-                        bigquery.SchemaField("affects", 'RECORD',
-                            fields=(
-                                bigquery.SchemaField("vendor", 'RECORD',
-                                    fields=(
-                                        bigquery.SchemaField("vendor_data", 'RECORD', mode="REPEATED",
-                                            fields=(
-                                                bigquery.SchemaField("product", 'RECORD',
-                                                    fields=(
-                                                        bigquery.SchemaField("product_data", 'RECORD', mode="REPEATED",
-                                                            fields=(
-                                                                bigquery.SchemaField("version", 'RECORD',
-                                                                    fields=(
-                                                                        bigquery.SchemaField("version_data", 'RECORD', mode="REPEATED",
-                                                                            fields=(
-                                                                                bigquery.SchemaField("version_affected", 'STRING'),
-                                                                                bigquery.SchemaField("version_value", 'STRING'),
-                                                                            )
-                                                                        ),
-                                                                    )
-                                                                ),
-                                                                bigquery.SchemaField("product_name", 'STRING'),
-                                                            )
-                                                        ),
-                                                    )
-                                                ),
-                                                bigquery.SchemaField("vendor_name", 'STRING'),
-                                            )
-                                        ),
-                                    )
-                                ),
-                            )
-                        ),
                         bigquery.SchemaField("data_type", 'STRING'),
                     )
             ),
-]
+    ]
 
 
     table = bigquery.Table(table_ref, schema=schema)
