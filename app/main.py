@@ -111,7 +111,7 @@ def subscribe():
         if len(response.received_messages) > 0:
             time.sleep(1)
         else:
-            print('No more messages, canceling subscription...')
+            print('No more messages, canceling subscription ...')
 
             future.cancel()
             loop = False
@@ -305,7 +305,7 @@ def server_error(e):
     print('An internal error occurred')
     return 'An internal error occurred.', 500
 
-print("Preparing..")
+print("Preparing ...")
 project_id = os.getenv('PROJECT')
 subscription_name = os.getenv('SUBSCRIPTION')
 
