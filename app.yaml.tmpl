@@ -1,4 +1,5 @@
 runtime: python37
+instance_class: F2
 service: ingest-nvd-cve
 entrypoint: gunicorn -t 300 -b :8080 -w 1 app.main:app
 env_variables:
