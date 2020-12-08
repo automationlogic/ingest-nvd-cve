@@ -19,6 +19,29 @@ from google.cloud import pubsub_v1
 from google.cloud import bigquery
 from google.cloud.exceptions import NotFound, Conflict
 
+
+nvd_cve_download_url_prefix = "https://nvd.nist.gov/feeds/json/cve/1.1/{file}{extension}"
+nvd_cve_json_list = [
+    "nvdcve-1.1-2002.json",
+    "nvdcve-1.1-2003.json",
+    "nvdcve-1.1-2004.json",
+    "nvdcve-1.1-2005.json",
+    "nvdcve-1.1-2006.json",
+    "nvdcve-1.1-2007.json",
+    "nvdcve-1.1-2008.json",
+    "nvdcve-1.1-2009.json",
+    "nvdcve-1.1-2010.json",
+    "nvdcve-1.1-2011.json",
+    "nvdcve-1.1-2012.json",
+    "nvdcve-1.1-2013.json",
+    "nvdcve-1.1-2014.json",
+    "nvdcve-1.1-2015.json",
+    "nvdcve-1.1-2016.json",
+    "nvdcve-1.1-2017.json",
+    "nvdcve-1.1-2018.json",
+    "nvdcve-1.1-2019.json"
+]
+
 #JSONDecoder doesnt accept Decimal objects => subclassing json.JSONEncoder
 #allows decimals as part of an object to be encoded as a json string
 class DecimalEncoder(json.JSONEncoder):
@@ -36,24 +59,29 @@ def ok():
 @app.route('/ingest')
 def ingest():
     topic_name = os.getenv('TOPIC')
-    url = os.getenv('URL')
 
     publisher = pubsub_v1.PublisherClient(batch_settings=pubsub_v1.types.BatchSettings(max_latency=5))
     topic_path = publisher.topic_path(project_id, topic_name)
+    print('Publishing data to {} ...'.format(topic_path))
 
-    request = rq.get(url)
-    zip_file = zipfile.ZipFile(BytesIO(request.content))
+    for json in nvd_cve_json_list:
+        print('Publishing records from {} ...'.format(json))
+        request = rq.get(nvd_cve_download_url_prefix.format(file=json, extension=  ".zip"))
+        nvd_zip = zipfile.ZipFile(BytesIO(request.content))
+        nvd_json = nvd_zip.open(json)
+        publish(nvd_json, publisher, topic_path)
 
-    # unzips zipfile
-    zipfilee = zip_file.open('nvdcve-1.1-2019.json')
+    subscribe()
 
+    return 'ok'
+
+def publish(json_file, publisher, topic_path):
     # zipfile is passed into ijson.items method which creates a generator, CVE_Items
     # creates json object for each row to be uploaded to BigQuery
-    lines = items(zipfilee, "CVE_Items.item")
+    lines = items(json_file, "CVE_Items.item")
 
     chunk_size = 50
 
-    print('Publishing data to {} ...'.format(topic_path))
     count = 0
     chunk = []
     for line in lines:
@@ -70,10 +98,6 @@ def ingest():
     if count > 0:
         bytes_chunk = bytes("\r\n".join(chunk).encode('utf-8'))
         publisher.publish(topic_path, data=bytes_chunk)
-
-    subscribe()
-
-    return 'ok'
 
 def subscribe():
     future = subscriber.subscribe(subscription_path, callback=callback)
