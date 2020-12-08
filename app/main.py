@@ -190,6 +190,7 @@ def create_table():
                                             )
                                         ),
                                         bigquery.SchemaField("operator", 'STRING'),
+                                        bigquery.SchemaField("negate", 'BOOLEAN'),
                                     )
                                 ),
                                 bigquery.SchemaField("cpe_match", 'RECORD', mode="REPEATED",
@@ -203,6 +204,7 @@ def create_table():
                                     )
                                 ),
                                 bigquery.SchemaField("operator", 'STRING'),
+                                bigquery.SchemaField("negate", 'BOOLEAN'),
                             )
                         ),
                         bigquery.SchemaField("CVE_data_version", 'FLOAT'),
